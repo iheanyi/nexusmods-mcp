@@ -7,7 +7,7 @@ A lightweight TypeScript MCP server for looking up Nexus mods and managing a loc
 
 The companion Vortex extension reuses the user's existing Nexus login. OAuth access tokens, API keys, and refresh tokens stay inside Vortex. The MCP process receives account summaries, API responses, and operation results.
 
-This is an independent MIT-licensed project, unaffiliated with Nexus Mods. The initial release has automated integration tests; live Vortex authentication and mod operations have not been verified end to end.
+This is an independent MIT-licensed project, unaffiliated with Nexus Mods. Windows desktop testing verified real Vortex OAuth reuse, Nexus reads, and download/install/removal jobs. See the [desktop validation report](docs/desktop-validation.md) for exactly what was exercised and the remaining gaps.
 
 ## Platform support
 
@@ -15,7 +15,7 @@ The Node.js MCP server and standalone Nexus API tools are portable across macOS,
 
 | Platform | Server and Nexus API mode | Vortex local mod management |
 | --- | --- | --- |
-| Windows | Included in CI | Requires installed Vortex; source signatures checked against 2.7.2, live workflow unverified |
+| Windows | Included in CI | Live OAuth, Nexus reads, and download/install/removal checked with Vortex 2.7.2; see validation report |
 | Linux | Included in CI | Requires a working native Vortex build or Wine installation; live workflow unverified |
 | macOS | Included in CI | No native Vortex build documented in the checked upstream sources; use standalone catalogue mode |
 
@@ -198,7 +198,7 @@ Limitations:
 - Job success does not mean a running game has verified the mod's compatibility. Jobs are in memory, capped at 20 pending and 100 retained entries, and disappear on restart. An unresolved Vortex callback stays running; inspect Vortex before retrying. There is no cancellation or replay endpoint.
 - Local profile mutations require the selected profile to be active. Profile creation/switching, arbitrary shell execution, filesystem/archive editing, mod publishing, and account mutations are outside this server's tool surface.
 - Mod removal removes the local mod from all profiles for its game. Use `vortex_set_mod_enabled` for a reversible profile-specific change.
-- Vortex bridge compatibility is checked against current source, Vortex 2.7.2's shipped API, and mocked integration fixtures. A real desktop install/download/deploy flow still needs verification with a signed-in Vortex instance and a test game/profile.
+- Vortex bridge compatibility is checked against current source, Vortex 2.7.2's shipped API, integration fixtures, and a signed-in Windows desktop session. [Desktop validation](docs/desktop-validation.md) documents the tested operations; desktop coverage is not a claim of compatibility with every game, installer, or platform.
 
 ## Development
 

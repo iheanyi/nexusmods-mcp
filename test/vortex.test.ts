@@ -14,7 +14,7 @@ function fixture() {
       mods: { skyrimse: { mod: { state: 'installed', attributes: { name: 'Test Mod', modId: 42, fileId: 99, version: '1.0' } } } },
       downloads: { files: { ready: { state: 'finished', game: ['skyrimse'], localPath: 'PRIVATE_PATH', modInfo: { nexus: { ids: { modId: 42, fileId: 99, key: 'PRIVATE_KEY' } } } },
         wrong: { state: 'finished', game: ['fallout4'] }, pending: { state: 'started', game: ['skyrimse'] } } } },
-    settings: { profiles: { activeProfileId: 'active' }, gameMode: { discovered: { skyrimse: { path: 'PRIVATE_PATH' } } } },
+    settings: { profiles: { activeProfileId: 'active', nextProfileId: 'active' }, gameMode: { discovered: { skyrimse: { path: 'PRIVATE_PATH' } } } },
     session: { gameMode: { known: [{ id: 'skyrimse', name: 'Skyrim SE', details: { nexusPageId: 'skyrimspecialedition' } }] } },
   };
   const api: VortexApi = { getState: () => state, getPath: () => '', events: new EventEmitter(), ext: {},
@@ -80,6 +80,15 @@ test('download jobs use Vortex ID and disable automatic installation', async () 
   const result = await execute('vortex_job', { jobId: job.jobId }) as Job;
   assert.equal(result.state, 'succeeded');
   assert.equal((result.result as { downloadId: string }).downloadId, 'ready');
+});
+
+test('settled Vortex profile accepts mutations while deactivation is blocked', async () => {
+  const { execute, state } = fixture();
+  const job = await execute('vortex_set_mod_enabled', { profileId: 'active', modId: 'mod', enabled: true }) as Job;
+  await tick();
+  assert.equal((await execute('vortex_job', { jobId: job.jobId }) as Job).state, 'succeeded');
+  state.settings!.profiles!.nextProfileId = undefined;
+  await assert.rejects(execute('vortex_set_mod_enabled', { profileId: 'active', modId: 'mod', enabled: false }), { code: 'profile_not_active' });
 });
 
 test('installation and deployment pass actual Vortex callback positions', async () => {

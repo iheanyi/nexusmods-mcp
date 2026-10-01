@@ -7,7 +7,9 @@ import type { EnableMods, Profile, VortexApi, VortexState } from './types.js';
 function profile(state: VortexState, id: string, active = false): Profile {
   const found = state.persistent?.profiles?.[id];
   if (!found) throw new AppError('profile_not_found', 'Vortex profile does not exist.', 404);
-  if (active && (state.settings?.profiles?.activeProfileId !== id || state.settings?.profiles?.nextProfileId)) {
+  // Vortex keeps nextProfileId equal to activeProfileId once a switch settles.
+  // A different target (including undefined during deactivation) is in progress.
+  if (active && (state.settings?.profiles?.activeProfileId !== id || state.settings?.profiles?.nextProfileId !== id)) {
     throw new AppError('profile_not_active', 'Activate this profile in Vortex and wait for the switch to finish before mutating mods.', 409);
   }
   return found;
