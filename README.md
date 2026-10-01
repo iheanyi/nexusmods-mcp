@@ -95,6 +95,36 @@ node dist/cli.js
 
 This waits for an MCP client on stdin; it is not an interactive shell. Development mode is `npm run dev`. Protocol output goes to stdout; diagnostics go to stderr.
 
+### Codex setup
+
+Build the project and keep Vortex open with the bridge enabled. Register the stdio server in Codex's user configuration from the repository directory.
+
+PowerShell:
+
+```powershell
+$nexusMcpCli = (Resolve-Path -LiteralPath 'dist/cli.js').Path
+$nexusNode = (Get-Command node).Source
+codex mcp add nexusmods --env 'NEXUS_API_KEY=' -- $nexusNode $nexusMcpCli
+codex mcp get nexusmods
+```
+
+macOS/Linux:
+
+```sh
+codex mcp add nexusmods --env NEXUS_API_KEY= -- "$(command -v node)" "$PWD/dist/cli.js"
+codex mcp get nexusmods
+```
+
+The empty `NEXUS_API_KEY` override selects Vortex session reuse. For a custom Vortex directory, also pass `--env "VORTEX_BRIDGE_FILE=<absolute path to bridge.json>"` before `--`. No MCP OAuth login is required: Vortex owns the Nexus login.
+
+Codex local clients share `~/.codex/config.toml`. In the desktop app, reload the server through **Settings → MCP servers → Restart**, then start a new local chat on the same computer as Vortex. Use `/mcp` to inspect connected servers. The registration points to this checkout's built file, so keep the checkout in place and rebuild after source changes. See the [official OpenAI MCP setup documentation](https://learn.chatgpt.com/docs/extend/mcp).
+
+Example first prompt:
+
+> Use the nexusmods MCP to show my Vortex games and profiles, then list mods in my active profile. For my installed Witcher 3 mods, compare their installed files with available Nexus files and summarize candidate updates and dependency information. Make no changes.
+
+After reviewing a candidate, a separate request can download its selected Nexus file and install it disabled through Vortex. Enabling, deployment, and removal are separate tools; specify those actions explicitly when wanted.
+
 ## HTTP transport
 
 On PowerShell:
