@@ -1,0 +1,10 @@
+node_modules/
+dist/
+coverage/
+.research/
+.env
+.env.*
+!.env.example
+bridge.json
+*.log
+*.tsbuildinfo

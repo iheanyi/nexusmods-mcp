@@ -1,0 +1,42 @@
+{
+  "name": "nexusmods-mcp",
+  "version": "0.1.0",
+  "description": "Local Nexus Mods MCP server with a Vortex session and mod-management bridge",
+  "license": "MIT",
+  "author": "Iheanyi Ekechukwu",
+  "repository": { "type": "git", "url": "git+https://github.com/iheanyi/nexusmods-mcp.git" },
+  "homepage": "https://github.com/iheanyi/nexusmods-mcp#readme",
+  "bugs": { "url": "https://github.com/iheanyi/nexusmods-mcp/issues" },
+  "type": "module",
+  "private": true,
+  "engines": {
+    "node": ">=22"
+  },
+  "bin": {
+    "nexusmods-mcp": "dist/cli.js"
+  },
+  "scripts": {
+    "dev": "tsx src/cli.ts",
+    "start": "node dist/cli.js",
+    "build": "tsc -p tsconfig.build.json && node scripts/build-extension.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "node scripts/test.mjs",
+    "check": "npm run typecheck && npm test && npm run build",
+    "package:extension": "node scripts/package-extension.mjs",
+    "smoke": "node scripts/smoke.mjs"
+  },
+  "dependencies": {
+    "@elysia/node": "^1.4.6",
+    "@modelcontextprotocol/server": "^2.2.0",
+    "elysia": "^1.4.30",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@modelcontextprotocol/client": "^2.2.0",
+    "@types/node": "^24.0.0",
+    "esbuild": "^0.25.0",
+    "fflate": "^0.8.3",
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.0"
+  }
+}

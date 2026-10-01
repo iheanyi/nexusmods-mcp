@@ -1,0 +1,8 @@
+{
+  "id": "nexusmods-mcp-bridge",
+  "name": "Nexus Mods MCP Bridge",
+  "author": "nexusmods-mcp contributors",
+  "version": "0.1.0",
+  "description": "Allows authenticated local MCP agents to reuse the Vortex session and manage mods through Vortex.",
+  "type": "extension"
+}
